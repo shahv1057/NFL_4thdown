@@ -1,5 +1,6 @@
-numpy==1.18.5
 seaborn==0.10.1
-streamlit==0.76.0
 pandas==1.0.5
+pickle5==0.0.11
+numpy==1.18.5
+streamlit==0.76.0
 scikit_learn==0.24.1
