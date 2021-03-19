@@ -1,6 +1,6 @@
-seaborn==0.10.1
-pandas==1.0.5
+streamlit==0.79.0
 pickle5==0.0.11
+pandas==1.0.5
 numpy==1.18.5
-streamlit==0.76.0
+seaborn==0.10.1
 scikit_learn==0.24.1
