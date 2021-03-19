@@ -72,8 +72,9 @@ def prediction(user_prediction_data):
 # front end elements of the web page 
 def main():
     html_temp = """ 
-    <div style="background-color:green;padding:13px"> 
-    <h1 style ="color:white;text-align:center;">NFL 4th Down Play Prediction</h1>
+    <div style="background-color:green;padding:13px;">
+
+    <h1 style ="color:white;text-align:center;">NFL 4th Down Play Prediction 🏈</h1>
     </div> 
     """
 
