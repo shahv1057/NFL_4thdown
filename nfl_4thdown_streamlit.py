@@ -8,7 +8,7 @@ import pandas as pd
 import seaborn as sns
 from   sklearn.compose            import *
 from   sklearn.ensemble           import GradientBoostingClassifier
-from   sklearn.impute             import *
+from   sklearn.impute             import SimpleImputer
 from   sklearn.metrics            import confusion_matrix, accuracy_score
 from   sklearn.model_selection    import train_test_split
 from   sklearn.pipeline           import Pipeline
@@ -73,7 +73,7 @@ def prediction(user_prediction_data):
 def main():
     st.set_page_config(layout='wide',page_title="Veeral's App 🏈")
     st.title('NFL 4th Down Play Prediction 🏈')
-    st.markdown('A Web App by [Veeral Shah](veeraldoesdata.com)')
+    st.markdown('A Web App by [Veeral Shah](https://veeraldoesdata.com)')
 
     # display the front end aspect
 
