@@ -145,23 +145,7 @@ def main():
             int(posteam_score-defteam_score),
             season]]
     user_prediction_data = pd.DataFrame(arr,columns=columns)
-    html_temp2 = f"""
-    <div style = "border-style: solid;
-    background-color: #f0f2f6;
-    border-radius: 15px;
-    border-width: 1px;
-    border-color: #f63366;
-    margin-bottom:30px;
-    margin-left:5px;
-    padding:12px;">
-    <h1 style='text-align: center; #262730: black; font-size:45px;'>{posteam} vs. {negteam}</h1>
-    <h3 style='text-align: center; #262730: black;'>4th and {ydstogo}</h3>
-    <h3 style='text-align: center; #262730: black;'>Ball on the {sideoffield} {ydline}</h3>
-    <h3 style='text-align: center; #262730: black;'>{int(min_left_in_quarter)} Minutes Left in Quarter {quarter}</h3>
-    <h3 style='text-align: center; color: black;'>Score: {posteam_score}-{defteam_score}</h3>
-    </div>
-    """
-    html_temp3 = f"""
+    directions_html = f"""
     <div style = "border-style: solid;
     border-radius: 15px;
     background-color: #f0f2f6;
@@ -176,8 +160,24 @@ def main():
     <h4 style='text-align: left; color: #262730;'>3) Predict what type of play will be run</h4>
     </div>
     """
-    col3.markdown(html_temp3,unsafe_allow_html=True)
-    col3.markdown(html_temp2,unsafe_allow_html=True)
+    summary_html = f"""
+    <div style = "border-style: solid;
+    border-radius: 15px;
+    background-color: #f0f2f6;
+    border-width: 1px;
+    border-color: #f63366;
+    margin-bottom:30px;
+    margin-left:5px;
+    padding:12px;">
+    <h1 style='text-align: center; color: #262730; font-size:45px;'>{posteam} vs. {negteam}</h1>
+    <h3 style='text-align: center; color: #262730;'>4th and {ydstogo}</h3>
+    <h3 style='text-align: center; color: #262730;'>Ball on the {sideoffield} {ydline}</h3>
+    <h3 style='text-align: center; color: #262730;'>{int(min_left_in_quarter)} Minutes Left in Quarter {quarter}</h3>
+    <h3 style='text-align: center; color: #262730;'>Score: {posteam_score}-{defteam_score}</h3>
+    </div>
+    """
+    col3.markdown(directions_html,unsafe_allow_html=True)
+    col3.markdown(summary_html,unsafe_allow_html=True)
     # when 'Predict' is clicked, make the prediction and store it 
     giflist = ['https://media.giphy.com/media/FB7yASVBqPiFy/giphy.gif','https://media.giphy.com/media/57G6JvU7SuoNcY9Rs4/giphy.gif','https://media.giphy.com/media/xCyjMEYF9H2ZcLqf7t/giphy.gif','https://media.giphy.com/media/ORUsy5ZwwqZsd5jyd8/giphy.gif']
     if col1.button("Predict"): 
@@ -192,8 +192,7 @@ def main():
                 col11.markdown(f'{playtype} ({prob*100:.1f}%)')
         html_temp4 = f"""
     <div style = "margin-left: 8px">
-    <div style = "
-    text-align:center;
+    <div style = "text-align:center;
     border-style: solid;
     border-radius: 15px;
     background: url({finalgif});
@@ -203,12 +202,13 @@ def main():
     border-color: #f63366;
     padding: 5px; 
     width: 100%;
-    height: 350px">
+    height: 350px;">
     </div>
     </div>
     """
 #    <img src={finalgif} width=100%></img>
-        col22.markdown(html_temp4,unsafe_allow_html=True)       
+        col22.markdown(html_temp4,unsafe_allow_html=True)
+    
 
 if __name__=='__main__': 
     main()  
