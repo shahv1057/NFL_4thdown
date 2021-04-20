@@ -57,7 +57,7 @@ def filter_data(X):
     Xdf_c['yrdln'] = Xdf_c.apply(lambda x: convert_yd_line_vars(x['posteam'], x['yrdln']), axis=1)
     return Xdf_c
 
-pickle_in = open('classifier.pkl', 'rb') 
+pickle_in = open('data/classifier.pkl', 'rb') 
 classifier = pickle.load(pickle_in)
     
 @st.cache
@@ -191,7 +191,7 @@ def main():
     #st.markdown(summary_html,unsafe_allow_html=True)
     giflist = ['https://media.giphy.com/media/FB7yASVBqPiFy/giphy.gif','https://media.giphy.com/media/57G6JvU7SuoNcY9Rs4/giphy.gif','https://media.giphy.com/media/xCyjMEYF9H2ZcLqf7t/giphy.gif','https://media.giphy.com/media/ORUsy5ZwwqZsd5jyd8/giphy.gif']
     # when 'Predict' is clicked, make the prediction and store it 
-    play_class = pd.read_pickle('team_play_freq.pkl')
+    play_class = pd.read_pickle('data/team_play_freq.pkl')
     st.sidebar.markdown('###')
     if st.sidebar.button("Predict Your Play!"):
         
