@@ -4,6 +4,7 @@ import numpy as np
 import pickle5 as pickle
 import time as tm
 from   datetime import time, timedelta
+import plotly.express as px
 
 from   sklearn.compose            import ColumnTransformer
 from   sklearn.ensemble           import GradientBoostingClassifier
@@ -67,8 +68,10 @@ def main():
     st.set_page_config(layout='wide',page_title="Veeral's App 🏈")
     st.title('NFL 4th Down Play Prediction')
     st.markdown('A Web App by [Veeral Shah](https://veeraldoesdata.com)')
-    intro_text = "Hello and welcome! Use the sidebar to customize the game situation.\nKeep track of your changes on the scoreboard before predicting your play!"
-    st.text(intro_text)
+    intro_text = "Hello and welcome! \n\n1) Use the sidebar to customize the game situation\n2) Keep track of your changes on the scoreboard ➡️\n3) Predict your play!"
+    st.sidebar.title('Directions:')
+    st.sidebar.text(intro_text)
+    
     #intro = st.empty()
     #for i in range(len(intro_text)):
         #intro.text(intro_text[:i])
@@ -116,9 +119,9 @@ def main():
     posteam_score = st.sidebar.number_input('Team Points', min_value=0,max_value=50,value=0,step=1)
     defteam_score = st.sidebar.number_input('Opp Team Points', min_value=0,max_value=50,value=0,step=1)
     st.sidebar.subheader("Where's the Ball?")
-    sideoffield = st.sidebar.selectbox("Side Of Field",['OWN',"OPP"])
-    ydline = st.sidebar.slider('Yard Line',min_value=1,max_value=50,value=25)
-    ydstogo = st.sidebar.slider('Yards To Go',min_value=1,max_value=30,value=10)
+    sideoffield = st.sidebar.selectbox("Side Of Field",['OPP',"OWN"])
+    ydline = st.sidebar.slider('Yard Line',min_value=1,max_value=50,value=35)
+    ydstogo = st.sidebar.slider('Yards To Go',min_value=1,max_value=30,value=1)
     if sideoffield == 'OWN':
         side = posteam_abb
     else:
@@ -127,7 +130,6 @@ def main():
         goal_to_go = 1
     else:
         goal_to_go = 0
-    
     st.sidebar.subheader("How much Time is Left?")
     quarter = st.sidebar.selectbox("Quarter",[1,2,3,4])
     if quarter > 2:
@@ -140,9 +142,11 @@ def main():
     sec_left_in_quarter = time_left.minute * 60.0 + time_left.second
     sec_left_in_half = ((halfval*2)-quarter)*15.0*60.0 + sec_left_in_quarter
     sec_left_in_game = (2-halfval)*30*60 + sec_left_in_half
-    st.sidebar.subheader("Final Details")
-    posteam_timeouts_remaining = st.sidebar.selectbox("Timeouts Left",[0,1,2,3],index=3)
-    defteam_timeouts_remaining = st.sidebar.selectbox("Opp. Timeouts Left",[0,1,2,3],index=3)
+    #st.sidebar.subheader("Final Details")
+    posteam_timeouts_remaining = 3
+    defteam_timeouts_remaining = 3
+    #posteam_timeouts_remaining = st.sidebar.selectbox("Timeouts Left",[0,1,2,3],index=3)
+    #defteam_timeouts_remaining = st.sidebar.selectbox("Opp. Timeouts Left",[0,1,2,3],index=3)
     season = 2020
     arr = [[posteam_abb,
             negteam_abb,
@@ -183,11 +187,13 @@ def main():
 
     st.markdown(directions_html,unsafe_allow_html=True)
     st.markdown(directions_html2,unsafe_allow_html=True)
+    st.markdown('#')
     #st.markdown(summary_html,unsafe_allow_html=True)
     giflist = ['https://media.giphy.com/media/FB7yASVBqPiFy/giphy.gif','https://media.giphy.com/media/57G6JvU7SuoNcY9Rs4/giphy.gif','https://media.giphy.com/media/xCyjMEYF9H2ZcLqf7t/giphy.gif','https://media.giphy.com/media/ORUsy5ZwwqZsd5jyd8/giphy.gif']
     # when 'Predict' is clicked, make the prediction and store it 
     play_class = pd.read_pickle('team_play_freq.pkl')
-    if st.sidebar.button("Predict"):
+    st.sidebar.markdown('###')
+    if st.sidebar.button("Predict Your Play!"):
         
         result = prediction(user_prediction_data)[0]
         
@@ -225,41 +231,56 @@ def main():
             #chart.add_rows(new_rows)
 
             # Pretend we're doing some computation that takes time.
-            tm.sleep(0.1)
-        
-        #status_text.text('Done!')
+            tm.sleep(0.065)
+        status_text.text('')
         
         for play_type,prob,gif in resultlist:
             if prob == result.max():
                 finalgif = gif
                 if play_type in ['Pass','Run']:
                     df = play_class[(play_class.posteam==posteam_abb)&(play_class.play_type==play_type.lower())&(play_class.play_class.str.contains(play_type.lower()))&(play_class['yd_bucket'].apply(lambda x: ydstogo in x))]
-                    play_type = df[df.play_id==df.play_id.max()]['play_class'].iloc[0].title()
-                
-                st.title(f'{play_type}')
+                    play = df[df.play_id==df.play_id.max()]['play_class'].iloc[0].title()
+                    chart_data = pd.read_csv('data/player_playcounts.csv',index_col=0)
+                    chart_input = chart_data[(chart_data.posteam==posteam_abb)&(chart_data.play_class==play.lower())].sort_values(by='Play Count',ascending=True).tail(10)
+                    if play_type == 'Pass':
+                        chart_title = f"{posteam_abb} - Most Common Targets on {play} Plays (Last 3 Years)"
+                    else:
+                        chart_title = f"{posteam_abb} - Most Common Rushers on {play} Plays (Last 3 Years)"    
+                    fig = px.bar(chart_input, 'Play Count', 'Player',title=chart_title,template='plotly_white')
+                    fig.update_traces(marker_color='rgb(158,202,225)',
+                                      marker_line_color='rgb(8,48,107)',
+                                      marker_line_width=1.5, opacity=0.6)
+                    fig.update_yaxes(title='')
+                    fig.update_xaxes(title='')
+                    st.title(f'{play}')
+                    st.plotly_chart(fig,use_container_width=True)
+                else:
+                    st.title(f'{play_type}')
                 
                 #st.title(f'{playtype} (in {prob*100:.1f}% of similar situations)')
             #else:
             #    st.markdown(f'{playtype} ({prob*100:.1f}%)')
             
-        html_temp4 = f"""
-        <div style = "margin-left: 8px">
-        <div style = "text-align:center;
-        border-style: solid;
-        border-radius: 15px;
-        background: url({finalgif});
-        background-size: cover;
-        background-position: center;
-        border-width: 1px;
-        border-color: #f63366;
-        padding: 5px; 
-        width: 100%;
-        height: 350px;">
-        </div>
-        </div>
-                      """
-        st.markdown(html_temp4,unsafe_allow_html=True)
+                    html_temp4 = f"""
+                    <div style = "margin-left: 8px">
+                    <div style = "text-align:center;
+                    border-style: solid;
+                    border-radius: 15px;
+                    background: url({finalgif});
+                    background-size: cover;
+                    background-position: center;
+                    border-width: 1px;
+                    border-color: #f63366;
+                    padding: 5px; 
+                    width: 100%;
+                    height: 350px;">
+                    </div>
+                    </div>
+                                  """
+                    st.markdown(html_temp4,unsafe_allow_html=True)
     
-
+    st.sidebar.markdown('##')
 if __name__=='__main__': 
     main()  
+
+
