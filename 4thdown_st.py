@@ -5,6 +5,7 @@ import pickle5 as pickle
 import time as tm
 from   datetime import time, timedelta
 import plotly.express as px
+from PIL import Image
 
 from   sklearn.compose            import ColumnTransformer
 from   sklearn.ensemble           import GradientBoostingClassifier
@@ -166,8 +167,15 @@ def main():
     teamsdf['Name2'] = teamsdf['Name'].str.replace('NY','New York').str.lower()
     team_str = teamsdf[teamsdf.Name == posteam].iloc[0,-1].replace(' ','-')
     oppteam_str = teamsdf[teamsdf.Name == negteam].iloc[0,-1].replace(' ','-')
-    col01.image(f'http://loodibee.com/wp-content/uploads/nfl-{team_str}-team-logo-2-300x300.png',use_column_width='always')
-    col02.image(f'http://loodibee.com/wp-content/uploads/nfl-{oppteam_str}-team-logo-2-300x300.png',use_column_width='always')
+    #col01.image(f'http://loodibee.com/wp-content/uploads/nfl-{team_str}-team-logo-2-300x300.png',use_column_width='always')
+    #image1_html = f"""<img src="http://loodibee.com/wp-content/uploads/nfl-{team_str}-team-logo-2-300x300.png class='img-fluid'">"""
+    #image2_html = f"""<img src="http://loodibee.com/wp-content/uploads/nfl-{oppteam_str}-team-logo-2-300x300.png class='img-fluid'">"""
+    #col01.markdown(image1_html,unsafe_allow_html=True)
+    #col02.markdown(image2_html,unsafe_allow_html=True)
+    #col02.image(f'http://loodibee.com/wp-content/uploads/nfl-{oppteam_str}-team-logo-2-300x300.png',use_column_width='always')
+    
+    col01.image(f'images/{team_str}.png',use_column_width='always')
+    col02.image(f'images/{oppteam_str}.png',use_column_width='always')
     user_prediction_data = pd.DataFrame(arr,columns=columns)
     directions_html =f""" 
 <div style="border-style: solid;
